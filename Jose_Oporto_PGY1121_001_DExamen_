@@ -1,0 +1,124 @@
+
+tipo_A = 3800
+tipo_B = 3000
+tipo_C = 2800
+tipo_D = 3500
+
+departamentos_disponibles = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] for _ in range(10)]
+departamentos_vendidos = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] for _ in range(10)]
+departamentos_vendidos[1][1] = 1
+departamentos_vendidos[1][2] = 1
+departamentos_vendidos[1][3] = 1
+departamentos_vendidos[3][0] = 1
+departamentos_vendidos[5][2] = 1
+departamentos_vendidos[6][1] = 1
+departamentos_vendidos[8][0] = 1
+departamentos_vendidos[8][3] = 1
+
+compradores = []
+
+def comprar_departamento():
+    print("Departamentos disponibles:")
+    mostrar_departamentos()
+    try:
+        piso = int(input("Ingrese el número del piso: "))
+    except ValueError:
+        print("Error: Ingrese solo números enteros para el piso.")
+        return
+    tipo = input("Ingrese el tipo de departamento (A, B, C, D): ")
+
+    if piso < 1 or piso > 10 or tipo not in ['A', 'B', 'C', 'D']:
+        print("Opción inválida. Recuerde ingresar la letra en mayúscula.")
+        return
+
+    departamento = tipo + str(piso)
+
+    if departamentos_vendidos[piso-1][ord(tipo) - ord('A')] == 1:
+        print("El departamento", departamento, "no está disponible.")
+    else:
+        departamentos_vendidos[piso-1][ord(tipo) - ord('A')] = 1
+        comprador_rut = input("Ingrese el RUN del comprador (sin guiones ni puntos): ")
+        compradores.append((comprador_rut, departamento))
+        print("Operación realizada correctamente.")
+
+def mostrar_departamentos():
+    print("Piso", "Tipo")
+    print("A", "B", "C", "D")
+    for piso in range(10, 0, -1):
+        print(piso, end=" ")
+        for tipo in range(4):
+            if departamentos_vendidos[piso-1][tipo] == 1:
+                print("[X]", end=" ")
+            else:
+                print("[]", end=" ")
+        print()
+
+def ver_listado_compradores():
+    if len(compradores) == 0:
+        print("No hay compradores registrados.")
+        return
+
+    compradores_ordenados = sorted(compradores, key=lambda x: x[0])
+    print("Listado de compradores:")
+    for comprador in compradores_ordenados:
+        print("RUN:", comprador[0], "- Departamento:", comprador[1])
+
+def mostrar_ganancias_totales():
+    total_por_tipo = [0, 0, 0, 0]
+    total_compras = 0
+
+    for piso in range(10):
+        for tipo in range(4):
+            if departamentos_vendidos[piso][tipo] == 1:
+                if tipo == 0:
+                    total_por_tipo[tipo] += tipo_A
+                elif tipo == 1:
+                    total_por_tipo[tipo] += tipo_B
+                elif tipo == 2:
+                    total_por_tipo[tipo] += tipo_C
+                elif tipo == 3:
+                    total_por_tipo[tipo] += tipo_D
+
+    for tipo in range(4):
+        total_compras += total_por_tipo[tipo]
+
+    print("Tipo de Departamento   Cantidad   Total")
+    for tipo in range(4):
+        cantidad = sum(departamentos_vendidos[piso][tipo] for piso in range(10))
+        total = total_por_tipo[tipo]
+        print("Tipo", chr(tipo + ord('A')), "  ", cantidad, "   ", total, "UF")
+
+    print("Total de todas las compras: ", total_compras, "UF")
+
+def salir():
+
+    print("Saliendo del sistema.")
+    print("Nombre: José")
+    print("Apellido: Oporto")
+    print("Fecha: 10-07-2023 ", )
+
+def menu():
+    while True:
+        print("\n----- Menú -----")
+        print("1. Comprar departamento")
+        print("2. Mostrar departamentos disponibles")
+        print("3. Ver listado de compradores")
+        print("4. Mostrar ganancias totales")
+        print("5. Salir")
+        opc = int(input("Seleccione una opción: "))
+
+        if opc == 1:
+            comprar_departamento()
+        elif opc == 2:
+            mostrar_departamentos()
+        elif opc == 3:
+            ver_listado_compradores()
+        elif opc == 4:
+            mostrar_ganancias_totales()
+        elif opc == 5:
+            salir()
+            break
+        else:
+            print("Opción inválida.")
+
+menu()
